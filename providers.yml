@@ -3769,11 +3769,15 @@
   category: dev-tools
   authorize_url: https://sentry.io/oauth/authorize/
   token_url: https://sentry.io/oauth/token/
-  scopes: org:read project:read event:read
+  scopes: org:read project:read
   pkce_enabled: 'yes'
+  token_request_auth_method: 'body'
   refresh_url: https://sentry.io/oauth/token/
+  verification_endpoint: https://sentry.io/api/0/organizations/
+  token_response_metadata:
+    - user
   help_url: https://docs.sentry.io/api/auth/
-  notes: Token is scoped to the organization selected during the OAuth flow.
+  notes: Token is org-scoped and expires after 30 days. Response includes user object with id, name, and email.
 
 - keyname: workos
   display_name: WorkOS
