@@ -4,6 +4,8 @@ on:
   pull_request:
     paths:
       - 'providers.yml'
+      - '.github/scripts/**'
+      - '.github/workflows/validate.yml'
   push:
     branches: [main]
     paths:
@@ -12,6 +14,8 @@ on:
 jobs:
   validate:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
 
@@ -19,5 +23,16 @@ jobs:
         with:
           ruby-version: '3.3'
 
-      - name: Validate providers.yml
+      - name: Validate, sort, and generate JSON
         run: ruby .github/scripts/validate_providers.rb
+
+      - name: Commit changes if on main
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add providers.yml generated_providers.json
+          if ! git diff --staged --quiet; then
+            git commit -m "chore: sort providers and regenerate JSON"
+            git push
+          fi
