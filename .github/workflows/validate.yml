@@ -10,6 +10,8 @@ on:
     branches: [main]
     paths:
       - 'providers.yml'
+      - '.github/scripts/**'
+      - '.github/workflows/validate.yml'
 
 jobs:
   validate:
