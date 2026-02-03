@@ -1,12 +1,14 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-# Validates providers.yml for CI
-# Checks: valid YAML, required fields, no duplicate keynames, URL format, valid categories
+# Validates providers.yml, sorts alphabetically by keyname, and generates JSON
+# Run: ruby .github/scripts/validate_providers.rb
 
 require "yaml"
+require "json"
 
 PROVIDERS_PATH = File.expand_path("../../providers.yml", __dir__)
+JSON_PATH = File.expand_path("../../generated_providers.json", __dir__)
 
 REQUIRED_FIELDS = %w[keyname display_name category authorize_url token_url pkce_enabled].freeze
 
@@ -17,9 +19,10 @@ VALID_CATEGORIES = %w[
   social support travel
 ].freeze
 
+# --- Step 1: Validate ---
+
 errors = []
 
-# Parse YAML
 begin
   providers = YAML.load_file(PROVIDERS_PATH)
 rescue Psych::SyntaxError => e
@@ -35,27 +38,23 @@ end
 
 puts "Loaded #{providers.size} providers"
 
-# Check each provider
 keynames = []
 
 providers.each_with_index do |provider, index|
   label = provider["keyname"] || "entry ##{index + 1}"
 
-  # Required fields
   REQUIRED_FIELDS.each do |field|
     if provider[field].nil? || provider[field].to_s.strip.empty?
       errors << "#{label}: missing required field '#{field}'"
     end
   end
 
-  # Duplicate keynames
   keyname = provider["keyname"].to_s
   if keynames.include?(keyname)
     errors << "#{label}: duplicate keyname"
   end
   keynames << keyname
 
-  # URL format
   %w[authorize_url token_url].each do |url_field|
     url = provider[url_field].to_s
     next if url.empty?
@@ -65,13 +64,11 @@ providers.each_with_index do |provider, index|
     end
   end
 
-  # Category validation
   category = provider["category"].to_s
   unless category.empty? || VALID_CATEGORIES.include?(category)
     errors << "#{label}: invalid category '#{category}' (valid: #{VALID_CATEGORIES.join(", ")})"
   end
 
-  # pkce_enabled format
   pkce = provider["pkce_enabled"].to_s
   unless %w[yes no].include?(pkce)
     errors << "#{label}: pkce_enabled must be 'yes' or 'no', got '#{pkce}'"
@@ -82,6 +79,26 @@ if errors.any?
   puts "\nFAIL: #{errors.size} validation error(s)\n\n"
   errors.each { |e| puts "  - #{e}" }
   exit 1
-else
-  puts "PASS: All #{providers.size} providers valid"
 end
+
+puts "PASS: All #{providers.size} providers valid"
+
+# --- Step 2: Sort YAML by keyname ---
+
+raw = File.read(PROVIDERS_PATH)
+first_entry = raw.index("\n- keyname:")
+header = raw[0..first_entry]
+body = raw[(first_entry + 1)..]
+
+blocks = body.split(/(?=^- keyname:)/m).reject { |b| b.strip.empty? }
+sorted = blocks.sort_by { |b| b[/^- keyname:\s*(.+)/, 1].strip }
+
+output = header + sorted.map(&:strip).join("\n\n") + "\n"
+File.write(PROVIDERS_PATH, output)
+puts "Sorted #{blocks.size} providers alphabetically by keyname"
+
+# --- Step 3: Generate JSON ---
+
+json = JSON.pretty_generate(YAML.load_file(PROVIDERS_PATH), indent: "  ")
+File.write(JSON_PATH, "#{json}\n")
+puts "Generated generated_providers.json with #{providers.size} providers"
