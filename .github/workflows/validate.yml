@@ -1,0 +1,23 @@
+name: Validate Providers
+
+on:
+  pull_request:
+    paths:
+      - 'providers.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'providers.yml'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+
+      - name: Validate providers.yml
+        run: ruby .github/scripts/validate_providers.rb
