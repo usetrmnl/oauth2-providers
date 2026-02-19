@@ -3016,6 +3016,19 @@
   pkce_enabled: 'yes'
   token_site: https://api.stackexchange.com
 
+- keyname: steam
+  display_name: Steam
+  category: gaming
+  authorize_url: https://steamcommunity.com/oauth/login
+  token_url: https://api.steampowered.com/oauth/token
+  pkce_enabled: 'no'
+  auth_params: '{"response_type":"code"}'
+  token_site: https://api.steampowered.com
+  verification_endpoint: https://api.steampowered.com/ISteamUserOAuth/GetTokenDetails/v1/
+  verification_method: GET
+  help_url: https://partner.steamgames.com/doc/webapi_overview/oauth
+  notes: 'Not free. Obtain a Client ID from Valve via Steamworks: https://partner.steamgames.com/doc/webapi_overview/oauth'
+
 - keyname: stocktwits
   display_name: Stocktwits
   category: other
