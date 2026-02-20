@@ -4122,6 +4122,7 @@
     "category": "entertainment",
     "authorize_url": "https://api.prod.whoop.com/oauth/oauth2/auth",
     "token_url": "https://api.prod.whoop.com/oauth/oauth2/token",
+    "scopes": "offline",
     "pkce_enabled": "yes",
     "token_site": "https://api.prod.whoop.com/",
     "retry_after_headers": [
