@@ -659,15 +659,6 @@
     "token_site": "https://platform.brexapis.com"
   },
   {
-    "keyname": "buffer",
-    "display_name": "Buffer",
-    "category": "marketing",
-    "authorize_url": "https://bufferapp.com/oauth2/authorize",
-    "token_url": "https://api.bufferapp.com/1/oauth2/token.json",
-    "pkce_enabled": "no",
-    "notes": "Profile endpoint: https://api.bufferapp.com/1/user.json"
-  },
-  {
     "keyname": "bullhorn",
     "display_name": "Bullhorn",
     "category": "hr",
