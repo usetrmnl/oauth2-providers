@@ -1110,6 +1110,18 @@
   pkce_enabled: 'no'
   token_site: https://api.employmenthero.com/api
 
+- keyname: enphase
+  display_name: Enphase Energy
+  category: smart-home
+  authorize_url: https://api.enphaseenergy.com/oauth/authorize
+  token_url: https://api.enphaseenergy.com/oauth/token
+  pkce_enabled: 'no'
+  token_request_auth_method: 'header'
+  authorization_method: 'header'
+  help_url: https://developer-v4.enphase.com/docs/quickstart.html
+  verification_endpoint: https://api.enphaseenergy.com/api/v4/systems
+  notes: 'Requires an API key in addition to OAuth: append your app key as a query param to every request, e.g. https://api.enphaseenergy.com/api/v4/systems?key=YOUR_API_KEY. Find your system_id from that endpoint. Token exchange and refresh use HTTP Basic auth. Access tokens last 1 day, refresh tokens 1 month. Rate limits depend on your Enphase developer plan.'
+
 - keyname: envoy
   display_name: Envoy
   category: productivity
